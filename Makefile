@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-c -Wall
-LDFLAGS=
+LDFLAGS=-lcrypto
 SOURCES=$(shell find src/ -type f -name '*.c')
 OBJECTS=$(SOURCES:.c=.o)
 EXECUTABLE=a.out
@@ -18,6 +18,6 @@ clean:
 	@find src/ -type f -name '*.o' -exec rm -vf {} \;
 
 test: all
-	time ./$(EXECUTABLE)
+	bash -c "time ./$(EXECUTABLE)"
 
 .PHONY: clean
