@@ -6,7 +6,8 @@
 #include <pthread.h>
 #include <openssl/md5.h>
 
-#define DIFF 3
+#define DIFF 4
+
 #define NUM_CORES sysconf(_SC_NPROCESSORS_ONLN)
 #define NUM_THREADS NUM_CORES
 #define CHUNK_SIZE UINT64_MAX/NUM_THREADS
