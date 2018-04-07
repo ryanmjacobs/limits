@@ -1,17 +1,27 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
+#include <unistd.h>
 #include <string.h>
+#include <pthread.h>
 #include <openssl/md5.h>
 
-#define DIFF 6
+#define DIFF 3
+#define NUM_CORES sysconf(_SC_NPROCESSORS_ONLN)
+#define NUM_THREADS NUM_CORES
+#define CHUNK_SIZE UINT64_MAX/NUM_THREADS
 
-int main(void) {
+void *mine(void *args) {
+    int diff;
+    unsigned n = *(unsigned *)args;
     unsigned char digest[MD5_DIGEST_LENGTH];
 
-    for (uint64_t nonce = 0; nonce < UINT64_MAX; nonce++) {
+    for (unsigned i = 0; i < CHUNK_SIZE; i++) {
+        uint64_t nonce = (n*CHUNK_SIZE) + i;
+
         MD5((unsigned char*)&nonce, sizeof(nonce), (unsigned char*)&digest);    
 
-        int diff = DIFF;
+        diff = DIFF;
         do {
             if (digest[diff-1] != 0x00)
                 break;
@@ -20,12 +30,29 @@ int main(void) {
         if (diff == -1)
             break;
     }
-     
-     // print hash
-     char mdString[49];
-     for(int i = 0; i < 16; i++)
-          sprintf(&mdString[i*3], "%02x ", (unsigned int)digest[i]);
-     printf("md5 digest: %s\n", mdString);
+
+    // print hash
+    if (diff == -1) {
+        char mdString[49];
+        for(int i = 0; i < 16; i++)
+             sprintf(&mdString[i*3], "%02x ", (unsigned int)digest[i]);
+        printf("md5 digest: %s\n", mdString);
+        exit(0);
+    }
+}
+
+int main(void) {
+    pthread_t threads[NUM_THREADS];
+
+    for (unsigned i = 0; i < NUM_THREADS; i++) {
+        unsigned *n = malloc(sizeof(unsigned));
+        *n = i;
+        pthread_create(&threads[i], NULL, mine, n);
+    }
+
+    for (unsigned i = 0; i < NUM_THREADS; i++) {
+        pthread_join(threads[i], NULL);
+    }
 
     return 0;
 }

@@ -1,6 +1,6 @@
 CC=gcc
-CFLAGS=-c -Wall -std=c99
-LDFLAGS=-lcrypto
+CFLAGS=-c -Wall -std=c99 -g
+LDFLAGS=-lcrypto -lpthread
 SOURCES=$(shell find src/ -type f -name '*.c')
 OBJECTS=$(SOURCES:.c=.o)
 EXECUTABLE=a.out
