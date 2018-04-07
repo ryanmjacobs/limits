@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-c -Wall
+CFLAGS=-c -Wall -std=c99
 LDFLAGS=-lcrypto
 SOURCES=$(shell find src/ -type f -name '*.c')
 OBJECTS=$(SOURCES:.c=.o)
