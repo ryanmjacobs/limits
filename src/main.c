@@ -3,7 +3,7 @@
 #include <string.h>
 #include <openssl/md5.h>
 
-#define DIFF 5
+#define DIFF 6
 
 int main(void) {
     unsigned char digest[MD5_DIGEST_LENGTH];
